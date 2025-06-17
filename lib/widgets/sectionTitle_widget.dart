@@ -2,43 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:perfumeapp/widgets/constant_colors.dart/colors.dart';
 
 class NewArrivalProductListWidget extends StatelessWidget {
-  const NewArrivalProductListWidget({super.key});
+  final List<Map<String, dynamic>> products;
+  final String sectionTitle;
 
-  final List<Map<String, dynamic>> products = const [
-    {
-      "title": "Les Eaux De Chaneleau Spray",
-      "oldPrice": "AED500.00",
-      "newPrice": "484.00",
-      "offer": "40% OFF",
-      "isColored": false, // First image normal
-    },
-    {
-      "title": "Les Eaux De Chaneleau Spray",
-      "oldPrice": "AED500.00",
-      "newPrice": "484.00",
-      "offer": "40% OFF",
-      "isColored": true, // Second image with tint
-    },
-  ];
+  const NewArrivalProductListWidget({
+    super.key,
+    required this.products,
+    required this.sectionTitle,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
-                "New Arrivals",
-                style: TextStyle(
+                sectionTitle,
+                style: const TextStyle(
                   fontFamily: 'Hellix',
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
+              const Text(
                 "View All",
                 style: TextStyle(
                   fontFamily: 'Hellix',
@@ -51,17 +42,21 @@ class NewArrivalProductListWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        SizedBox(
-          height: 291,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              return _buildProductCard(products[index]);
-            },
+
+        if (products.isNotEmpty)
+          SizedBox(
+            height: 291,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                return _buildProductCard(products[index]);
+              },
+            ),
           ),
-        ),
+
+        const SizedBox(height: 12),
       ],
     );
   }
@@ -83,37 +78,38 @@ class NewArrivalProductListWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 4),
-              Align(
+              const Align(
                 alignment: Alignment.topRight,
                 child: Icon(Icons.favorite_border, size: 20),
               ),
               const SizedBox(height: 4),
 
-              // Product Image with conditional color tint
               Center(
-                child: product['isColored']
+                child: (product['isColored'] == true)
                     ? ColorFiltered(
                         colorFilter: const ColorFilter.mode(
-                          Colors.green,
-                          BlendMode.srcATop,
+                          Colors.purpleAccent,
+                          BlendMode.modulate,
                         ),
-                        child: Image.asset(
-                          'assets/images/perfume.png',
+                        child: Image.network(
+                          product['image'] ?? '',
                           height: 109.43,
                           width: 90,
+                          errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
                         ),
                       )
-                    : Image.asset(
-                        'assets/images/perfume.png',
+                    : Image.network(
+                        product['image'] ?? '',
                         height: 109.43,
                         width: 90,
+                        errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
                       ),
               ),
 
               const SizedBox(height: 8),
 
               Text(
-                product['title'],
+                product['title'] ?? '',
                 style: const TextStyle(
                   fontFamily: 'Hellix',
                   fontSize: 12,
@@ -122,7 +118,7 @@ class NewArrivalProductListWidget extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                product['oldPrice'],
+                product['oldPrice'] ?? '',
                 style: const TextStyle(
                   fontSize: 12,
                   color: Colors.grey,
@@ -131,11 +127,11 @@ class NewArrivalProductListWidget extends StatelessWidget {
               ),
               Text.rich(
                 TextSpan(
-                  text: "AED",
+                  text: "AED ",
                   style: const TextStyle(fontSize: 12),
                   children: [
                     TextSpan(
-                      text: product['newPrice'],
+                      text: product['newPrice'] ?? '',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
@@ -193,31 +189,32 @@ class NewArrivalProductListWidget extends StatelessWidget {
               ),
             ],
           ),
-          Positioned(
-            top: 10,
-            left: -10,
-            child: IntrinsicWidth(
-              child: Container(
-                height: 20,
-                padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 8),
-                decoration: const BoxDecoration(
-                  color: AppColors.oferbg,
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+          if ((product['offer'] ?? '').toString().isNotEmpty)
+            Positioned(
+              top: 10,
+              left: -10,
+              child: IntrinsicWidth(
+                child: Container(
+                  height: 20,
+                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 8),
+                  decoration: const BoxDecoration(
+                    color: AppColors.oferbg,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(20),
+                      bottomRight: Radius.circular(20),
+                    ),
                   ),
-                ),
-                child: Text(
-                  product['offer'],
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF28B463),
+                  child: Text(
+                    product['offer'],
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF28B463),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );

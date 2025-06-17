@@ -1,13 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
-class BannerWidget extends StatelessWidget {
+class BannerWidget2 extends StatelessWidget {
   final List<String> images;
 
-  const BannerWidget({super.key, required this.images});
+  const BannerWidget2({super.key, required this.images});
 
   @override
   Widget build(BuildContext context) {
+    print("+++++++++++++++$images");
     if (images.isEmpty) return const SizedBox.shrink();
 
     return Padding(
@@ -22,7 +23,7 @@ class BannerWidget extends StatelessWidget {
             viewportFraction: 1.0,
             autoPlayInterval: const Duration(seconds: 3),
           ),
-          items: images.map((imageUrl) {
+          items: images.map<Widget>((imageUrl) {
             return Builder(
               builder: (BuildContext context) {
                 return Image.network(
